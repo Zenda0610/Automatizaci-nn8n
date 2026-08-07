@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartQueue - Gestión Inteligente de Turnos</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="layout-container">
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Hero -->
+            <header class="hero">
+                <div class="hero-logo">
+                    <span class="material-symbols-outlined logo-icon">queue_play_next</span>
+                    <h1>SmartQueue</h1>
+                </div>
+                <h2 class="hero-title">Gestión Inteligente de Turnos</h2>
+                <p class="hero-description">Reserva tu turno de forma rápida, sencilla y sin hacer filas. Experimenta el futuro de la atención al cliente con nuestro sistema automatizado.</p>
+                <button id="btn-scroll-form" class="btn btn-primary">
+                    <span class="material-symbols-outlined">calendar_add_on</span>
+                    Solicitar turno
+                </button>
+            </header>
+
+            <!-- Info Cards -->
+            <section class="info-section">
+                <div class="info-card">
+                    <div class="info-icon bg-blue-light"><span class="material-symbols-outlined">timer</span></div>
+                    <h3>Tiempo promedio</h3>
+                    <p>Menos de 10 min de espera.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon bg-blue-light"><span class="material-symbols-outlined">bolt</span></div>
+                    <h3>Atención rápida</h3>
+                    <p>Priorizamos tu tiempo siempre.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon bg-blue-light"><span class="material-symbols-outlined">verified</span></div>
+                    <h3>Confirmación inmediata</h3>
+                    <p>Recibe notificaciones al instante.</p>
+                </div>
+            </section>
+
+            <!-- Booking Section -->
+            <section id="booking-section" class="form-section">
+                <div class="card-glass">
+                    <div id="form-container">
+                        <div class="form-header">
+                            <h2>Solicita tu turno</h2>
+                            <p>Completa el formulario para reservar tu espacio.</p>
+                        </div>
+                        
+                        <form id="turn-form" novalidate>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="nombre">Nombre completo</label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">person</span>
+                                        <input type="text" id="nombre" name="nombre" placeholder="Ej. Juan Pérez" required>
+                                    </div>
+                                    <span class="error-message" id="error-nombre"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="correo">Correo electrónico</label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">mail</span>
+                                        <input type="email" id="correo" name="correo" placeholder="ejemplo@correo.com" required>
+                                    </div>
+                                    <span class="error-message" id="error-correo"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="telefono">Teléfono</label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">call</span>
+                                        <input type="tel" id="telefono" name="telefono" placeholder="Ej. +1234567890" required>
+                                    </div>
+                                    <span class="error-message" id="error-telefono"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="servicio">Servicio</label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">support_agent</span>
+                                        <select id="servicio" name="servicio" required>
+                                            <option value="" disabled selected>Selecciona un servicio...</option>
+                                            <option value="Soporte Técnico">Soporte Técnico</option>
+                                            <option value="Atención al Cliente">Atención al Cliente</option>
+                                            <option value="Ventas">Ventas</option>
+                                            <option value="Consultoría">Consultoría</option>
+                                        </select>
+                                    </div>
+                                    <span class="error-message" id="error-servicio"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="fecha">Fecha</label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">calendar_today</span>
+                                        <input type="date" id="fecha" name="fecha" required>
+                                    </div>
+                                    <span class="error-message" id="error-fecha"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="hora">Hora</label>
+                                    <div class="input-wrapper">
+                                        <span class="material-symbols-outlined input-icon">schedule</span>
+                                        <input type="time" id="hora" name="hora" required>
+                                    </div>
+                                    <span class="error-message" id="error-hora"></span>
+                                </div>
+                            </div> <!-- End Grid -->
+
+                            <div class="form-group">
+                                <label>Tipo de atención</label>
+                                <div class="radio-group">
+                                    <label class="radio-card">
+                                        <input type="radio" name="tipoAtencion" value="Normal" checked>
+                                        <div class="radio-content">
+                                            <span class="material-symbols-outlined">person</span>
+                                            <span>Normal</span>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="tipoAtencion" value="Prioritaria">
+                                        <div class="radio-content">
+                                            <span class="material-symbols-outlined">star</span>
+                                            <span>Prioritaria</span>
+                                        </div>
+                                    </label>
+                                    <label class="radio-card">
+                                        <input type="radio" name="tipoAtencion" value="Virtual">
+                                        <div class="radio-content">
+                                            <span class="material-symbols-outlined">videocam</span>
+                                            <span>Virtual</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <span class="error-message" id="error-tipoAtencion"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="observaciones">Observaciones (Opcional)</label>
+                                <textarea id="observaciones" name="observaciones" rows="3" placeholder="Detalles adicionales sobre tu solicitud..."></textarea>
+                            </div>
+
+                            <div class="form-group checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="terminos" name="terminos" required>
+                                    <span class="checkmark"></span>
+                                    <span>Acepto los términos y condiciones</span>
+                                </label>
+                                <span class="error-message" id="error-terminos"></span>
+                            </div>
+
+                            <button type="submit" id="btn-submit" class="btn btn-primary btn-block">
+                                <span id="btn-text">Solicitar Turno</span>
+                                <span id="spinner" class="spinner hidden"></span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Success State -->
+                    <div id="success-container" class="success-state hidden">
+                        <div class="success-icon">
+                            <span class="material-symbols-outlined">check_circle</span>
+                        </div>
+                        <h2>¡Turno Registrado Exitosamente!</h2>
+                        <p>Hemos enviado un correo de confirmación con los detalles.</p>
+                        
+                        <div class="ticket-card">
+                            <div class="ticket-header">
+                                <span class="ticket-label">N° de Turno</span>
+                                <h3 id="ticket-number">SQ-2026-0001</h3>
+                            </div>
+                            <div class="ticket-body">
+                                <div class="ticket-detail">
+                                    <span class="detail-label">Servicio</span>
+                                    <span class="detail-value" id="ticket-service">Soporte Técnico</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <span class="detail-label">Fecha</span>
+                                    <span class="detail-value" id="ticket-date">10 Oct 2026</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <span class="detail-label">Hora</span>
+                                    <span class="detail-value" id="ticket-time">10:30 AM</span>
+                                </div>
+                                <div class="ticket-detail">
+                                    <span class="detail-label">Tipo</span>
+                                    <span class="detail-value" id="ticket-type">Virtual</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="btn-new-turn" class="btn btn-outline">
+                            <span class="material-symbols-outlined">refresh</span>
+                            Solicitar otro turno
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-info">
+                        <h3>Proyecto SmartQueue</h3>
+                        <p>Desarrollado para la gestión inteligente de turnos.</p>
+                    </div>
+                    <div class="footer-meta">
+                        <p><strong>Autor:</strong> Estudiante Universitario</p>
+                        <p><strong>Universidad:</strong> Universidad</p>
+                        <p><strong>Tecnologías:</strong> HTML5, CSS3, JavaScript, n8n, PostgreSQL</p>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2026 SmartQueue. Todos los derechos reservados.</p>
+                </div>
+            </footer>
+        </main>
+
+        <!-- Lateral Dashboard -->
+        <aside class="sidebar-dashboard">
+            <div class="dashboard-header">
+                <span class="material-symbols-outlined">monitoring</span>
+                <h2>Estadísticas</h2>
+            </div>
+            
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper">
+                        <span class="material-symbols-outlined stat-icon text-blue">today</span>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Turnos del día</span>
+                        <h3 class="stat-value" id="stat-today">142</h3>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper">
+                        <span class="material-symbols-outlined stat-icon text-orange">pending_actions</span>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Turnos pendientes</span>
+                        <h3 class="stat-value" id="stat-pending">28</h3>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper">
+                        <span class="material-symbols-outlined stat-icon text-green">timer</span>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Tiempo promedio</span>
+                        <h3 class="stat-value" id="stat-time">8 min</h3>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper">
+                        <span class="material-symbols-outlined stat-icon text-purple">groups</span>
+                    </div>
+                    <div class="stat-info">
+                        <span class="stat-label">Personas atendidas</span>
+                        <h3 class="stat-value" id="stat-attended">1,845</h3>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

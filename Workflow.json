@@ -1,0 +1,362 @@
+{
+  "name": "SmartQueue - Gestión de Turnos (Doble Enrutamiento)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "smartqueue",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        100,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": {
+          "__rl": true,
+          "value": "public",
+          "mode": "name"
+        },
+        "table": {
+          "__rl": true,
+          "value": "turnos",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "turno_id": "={{ $('Webhook').item.json.body.turnoId }}",
+            "nombre": "={{ $('Webhook').item.json.body.nombre }}",
+            "correo": "={{ $('Webhook').item.json.body.correo }}",
+            "telefono": "={{ $('Webhook').item.json.body.telefono }}",
+            "servicio": "={{ $('Webhook').item.json.body.servicio }}",
+            "fecha": "={{ $('Webhook').item.json.body.fecha }}",
+            "hora": "={{ $('Webhook').item.json.body.hora }}",
+            "tipo_atencion": "={{ $('Webhook').item.json.body.tipoAtencion }}",
+            "observaciones": "={{ $('Webhook').item.json.body.observaciones }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.3,
+      "position": [
+        300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Turno ID": "={{ $('Webhook').item.json.body.turnoId }}",
+            "Nombre": "={{ $('Webhook').item.json.body.nombre }}",
+            "Correo": "={{ $('Webhook').item.json.body.correo }}",
+            "Teléfono": "={{ $('Webhook').item.json.body.telefono }}",
+            "Servicio": "={{ $('Webhook').item.json.body.servicio }}",
+            "Fecha": "={{ $('Webhook').item.json.body.fecha }}",
+            "Hora": "={{ $('Webhook').item.json.body.hora }}",
+            "Atención": "={{ $('Webhook').item.json.body.tipoAtencion }}",
+            "Fecha Registro": "={{ $('Webhook').item.json.body.timestamp }}"
+          }
+        },
+        "options": {}
+      },
+      "id": "3",
+      "name": "Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.1,
+      "position": [
+        500,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $('Webhook').item.json.body.tipoAtencion }}",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "Normal"
+            },
+            {
+              "operation": "equal",
+              "value2": "Prioritaria"
+            },
+            {
+              "operation": "equal",
+              "value2": "Virtual"
+            }
+          ]
+        },
+        "fallbackOutput": 0
+      },
+      "id": "8",
+      "name": "Router Tipo Atención",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "dataType": "string",
+        "value1": "={{ $('Webhook').item.json.body.servicio }}",
+        "rules": {
+          "rules": [
+            {
+              "operation": "equal",
+              "value2": "Soporte Técnico"
+            },
+            {
+              "operation": "equal",
+              "value2": "Ventas"
+            },
+            {
+              "operation": "equal",
+              "value2": "Atención al Cliente"
+            },
+            {
+              "operation": "equal",
+              "value2": "Consultoría"
+            }
+          ]
+        },
+        "fallbackOutput": 0
+      },
+      "id": "4",
+      "name": "Router por Servicio",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 1,
+      "position": [
+        950,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "=Turno Prioritario Confirmado: {{ $('Webhook').item.json.body.turnoId }}",
+        "message": "=Hola {{ $('Webhook').item.json.body.nombre }},<br><br>\n\nTu turno de atención <b>Prioritaria</b> está confirmado. Por favor acércate directamente a la ventanilla especial al llegar.<br><br>\n<b>Turno:</b> {{ $('Webhook').item.json.body.turnoId }}<br>\n<b>Fecha:</b> {{ $('Webhook').item.json.body.fecha }} a las {{ $('Webhook').item.json.body.hora }}<br><br>\n\nEquipo SmartQueue.",
+        "appendAttribution": false,
+        "options": {}
+      },
+      "id": "10",
+      "name": "Email Prioritario",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        950,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "=Link de tu Turno Virtual: {{ $('Webhook').item.json.body.turnoId }}",
+        "message": "=Hola {{ $('Webhook').item.json.body.nombre }},<br><br>\n\nTu turno <b>Virtual</b> ha sido agendado. Aquí tienes el enlace para conectarte en la fecha indicada:<br><br>\n<b>Enlace:</b> <a href=\"https://meet.google.com/abc-defg-hij\">Unirse a la llamada</a><br>\n<b>Fecha:</b> {{ $('Webhook').item.json.body.fecha }} a las {{ $('Webhook').item.json.body.hora }}<br><br>\n\nNos vemos pronto.",
+        "appendAttribution": false,
+        "options": {}
+      },
+      "id": "11",
+      "name": "Email Virtual",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        950,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "=Confirmación Soporte Técnico: {{ $('Webhook').item.json.body.turnoId }}",
+        "message": "=Hola {{ $('Webhook').item.json.body.nombre }},<br><br>\n\nTu solicitud de <b>Soporte Técnico</b> ha sido registrada. Un técnico revisará tu caso.<br><br>\n<b>Turno:</b> {{ $('Webhook').item.json.body.turnoId }}<br>\n<b>Fecha:</b> {{ $('Webhook').item.json.body.fecha }} a las {{ $('Webhook').item.json.body.hora }}<br><br>\n\nEquipo Técnico SmartQueue.",
+        "appendAttribution": false,
+        "options": {}
+      },
+      "id": "5",
+      "name": "Email Soporte",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1250,
+        150
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "=Atención Comercial - Ventas: {{ $('Webhook').item.json.body.turnoId }}",
+        "message": "=Hola {{ $('Webhook').item.json.body.nombre }},<br><br>\n\nGracias por tu interés. Un asesor de <b>Ventas</b> te contactará en tu turno asignado.<br><br>\n<b>Turno:</b> {{ $('Webhook').item.json.body.turnoId }}<br>\n<b>Fecha:</b> {{ $('Webhook').item.json.body.fecha }} a las {{ $('Webhook').item.json.body.hora }}<br><br>\n\nEquipo Comercial SmartQueue.",
+        "appendAttribution": false,
+        "options": {}
+      },
+      "id": "6",
+      "name": "Email Ventas",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "=Turno Confirmado - Atención al Cliente: {{ $('Webhook').item.json.body.turnoId }}",
+        "message": "=Hola {{ $('Webhook').item.json.body.nombre }},<br><br>\n\nTu turno de <b>Atención al Cliente</b> está confirmado. Estamos listos para ayudarte.<br><br>\n<b>Turno:</b> {{ $('Webhook').item.json.body.turnoId }}<br>\n<b>Fecha:</b> {{ $('Webhook').item.json.body.fecha }} a las {{ $('Webhook').item.json.body.hora }}<br><br>\n\nAtención al Cliente SmartQueue.",
+        "appendAttribution": false,
+        "options": {}
+      },
+      "id": "7",
+      "name": "Email Atención",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1250,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "=Reserva de Consultoría: {{ $('Webhook').item.json.body.turnoId }}",
+        "message": "=Hola {{ $('Webhook').item.json.body.nombre }},<br><br>\n\nTu sesión de <b>Consultoría</b> ha sido agendada con éxito. Prepara tus dudas para la reunión.<br><br>\n<b>Turno:</b> {{ $('Webhook').item.json.body.turnoId }}<br>\n<b>Fecha:</b> {{ $('Webhook').item.json.body.fecha }} a las {{ $('Webhook').item.json.body.hora }}<br><br>\n\nEquipo de Consultoría SmartQueue.",
+        "appendAttribution": false,
+        "options": {}
+      },
+      "id": "9",
+      "name": "Email Consultoría",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1250,
+        600
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Router Tipo Atención",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router Tipo Atención": {
+      "main": [
+        [
+          {
+            "node": "Router por Servicio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Prioritario",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Virtual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Router por Servicio": {
+      "main": [
+        [
+          {
+            "node": "Email Soporte",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Ventas",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Atención",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Email Consultoría",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c4d5b6e7-1e5f-4a0b-9c7f-f7d1f5647565"
+}
