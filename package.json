@@ -1,0 +1,20 @@
+{
+  "name": "smartqueue-turnos",
+  "version": "1.0.0",
+  "description": "Sistema de gestión y asignación de turnos online conectado a PostgreSQL mediante webhooks de n8n",
+  "main": "app.js",
+  "scripts": {
+    "test": "node --check app.js"
+  },
+  "keywords": [
+    "turnos",
+    "citas",
+    "n8n",
+    "postgresql",
+    "webhooks",
+    "automatizacion",
+    "javascript"
+  ],
+  "author": "David Leonardo Martínez",
+  "license": "MIT"
+}

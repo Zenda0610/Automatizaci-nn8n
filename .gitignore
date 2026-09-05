@@ -1,0 +1,21 @@
+# Configuraciones de editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Logs y temporales
+logs/
+*.log
+npm-debug.log*
+
+# Entorno y dependencias
+.env
+.env.local
+node_modules/
+package-lock.json.bak

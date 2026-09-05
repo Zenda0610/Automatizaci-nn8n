@@ -1,5 +1,5 @@
-// Configuración
-const WEBHOOK_URL = 'https://davidlealperez522.app.n8n.cloud/webhook-test/smartqueue'; // REEMPLAZAR CON TU URL REAL
+// Configuración de Webhook n8n (Permite configurar vía localStorage o fallback demostrativo)
+const WEBHOOK_URL = localStorage.getItem('smartqueue_webhook_url') || 'https://tu-instancia.app.n8n.cloud/webhook-test/smartqueue';
 
 // Elementos del DOM
 const form = document.getElementById('turn-form');
@@ -159,9 +159,9 @@ async function enviarFormulario() {
     };
     
     try {
-        if (WEBHOOK_URL.includes('ejemplo.com')) {
-            // Simulación para pruebas si el usuario aún no ha cambiado la URL por la de n8n
-            await new Promise(resolve => setTimeout(resolve, 1500));
+        if (WEBHOOK_URL.includes('ejemplo.com') || WEBHOOK_URL.includes('tu-instancia')) {
+            // Simulación para demostración interactiva si aún no se ha enlazado la instancia activa de n8n
+            await new Promise(resolve => setTimeout(resolve, 1200));
         } else {
             // Envío real a n8n
             const response = await fetch(WEBHOOK_URL, {
